@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreUI
 
 struct HomeView: View {
     
@@ -17,7 +18,7 @@ struct HomeView: View {
             leftIcon: AnyView(leftIcon),
             rightIcon: AnyView(rightIcon)
         ) {
- 
+          
         }
     }
 }

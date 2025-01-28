@@ -5,15 +5,19 @@
 //  Created by Pedro Henrique Roca Moreira on 26/01/25.
 //
 
+import CoreUI
 import SwiftUI
 
 struct BaseView<Content: View>: View {
+    
+    @Environment(\.presentationMode) var presentationMode
     
     let hideNavigationBar: Bool
     let backgroundColor: Color
     let title: String
     let leftIcon: AnyView?
     let rightIcon: AnyView?
+    let leftIconAction: (() -> Void)?
     let content: Content
     
     init(
@@ -22,6 +26,7 @@ struct BaseView<Content: View>: View {
         title: String = .init(),
         leftIcon: AnyView? = nil,
         rightIcon: AnyView? = nil,
+        leftIconAction: (() -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {
         self.hideNavigationBar = hideNavigationBar
@@ -29,23 +34,27 @@ struct BaseView<Content: View>: View {
         self.title = title
         self.leftIcon = leftIcon
         self.rightIcon = rightIcon
+        self.leftIconAction = leftIconAction
         self.content = content()
     }
     
     var body: some View {
         ZStack {
-            // Background color ou imagem para a área completa
-            Color(backgroundColor)
+            Color(UIColor(Color.theme.background))
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 if !hideNavigationBar {
                     HStack {
                         ZStack {
-                            if leftIcon != nil {
-                                leftIcon
-                                    .foregroundColor(.accent)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            if let leftIcon = leftIcon {
+                                Button(action: {
+                                    leftIconAction?() ?? presentationMode.wrappedValue.dismiss()
+                                }) {
+                                    leftIcon
+                                }
+                                .foregroundColor(.accent)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             
                             Text(title)
